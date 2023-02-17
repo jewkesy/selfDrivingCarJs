@@ -2,7 +2,7 @@ const carCanvas = document.getElementById('carCanvas');
 carCanvas.width = 200;
 
 const networkCanvas = document.getElementById('networkCanvas');
-networkCanvas.width = 500;
+networkCanvas.width = 700;
 
 const carCtx = carCanvas.getContext("2d");
 const networkCtx = networkCanvas.getContext("2d");
@@ -21,14 +21,18 @@ if (localStorage.getItem("bestBrain")) {
 }
 
 const traffic = [
-	new Car(road.getLaneCenter(1), -100, 30, 50, "DUMMY", 1.75),
-	new Car(road.getLaneCenter(0), -300, 30, 50, "DUMMY", 2),
-	new Car(road.getLaneCenter(2), -300, 30, 50, "DUMMY", 2.5),
-	new Car(road.getLaneCenter(0), -500, 30, 50, "DUMMY", 2),
-	new Car(road.getLaneCenter(1), -500, 30, 50, "DUMMY", 2.5),
-	new Car(road.getLaneCenter(2), -700, 30, 50, "DUMMY", 2.75),
-	new Car(road.getLaneCenter(3), -700, 30, 50, "DUMMY", 2.25),
+	//new Car(road.getLaneCenter(getRandomInt(0, 2)), -400, 30, 50, "DUMMY", 0.75),
+
+	new Car(road.getLaneCenter(getRandomInt(0, 2)), -100, 30, 50, "DUMMY", 1.75),
+	new Car(road.getLaneCenter(getRandomInt(0, 2)), -300, 30, 50, "DUMMY", 2),
+	new Car(road.getLaneCenter(getRandomInt(0, 2)), -300, 30, 50, "DUMMY", 2.5),
+	new Car(road.getLaneCenter(getRandomInt(0, 2)), -500, 30, 50, "DUMMY", 2),
+	new Car(road.getLaneCenter(getRandomInt(0, 2)), -500, 30, 50, "DUMMY", 2.5),
+	new Car(road.getLaneCenter(getRandomInt(0, 2)), -700, 30, 50, "DUMMY", 2.75),
+	new Car(road.getLaneCenter(getRandomInt(0, 2)), -700, 30, 50, "DUMMY", 2.25),
 ];
+
+let paused = false;
 
 animate();
 
@@ -41,6 +45,10 @@ function discard() {
 	localStorage.removeItem("bestBrain");
 }
 
+function pause() {
+	paused = !paused
+}
+
 function generateCars(N) {
 	const cars = []; 
 	for (let i = 1; i <= N; i++) {
@@ -50,6 +58,8 @@ function generateCars(N) {
 }
 
 function animate(time) {
+	if (paused) return requestAnimationFrame(animate);;
+
 	for (let i = 0; i < traffic.length; i++) {
 		traffic[i].update(road.borders, []);
 	}
@@ -57,7 +67,7 @@ function animate(time) {
 	for (let i = 0; i < cars.length; i++) {
 		cars[i].update(road.borders, traffic);
 	}
-	
+
 	bestCar = cars.find(c => c.y == Math.min(...cars.map(c => c.y)));
 
 	carCanvas.height = window.innerHeight;

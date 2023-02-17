@@ -6,7 +6,7 @@ class Car{
 		this.height = height;
 
 		this.speed = 0;
-		this.acceleration = 0.2;
+		this.acceleration = 0.25;
 		this.maxSpeed = maxSpeed;
 		this.friction = 0.05;
 		this.angle = 0;
@@ -50,6 +50,25 @@ class Car{
 				this.controls.right = outputs[2];
 				this.controls.reverse = outputs[3];
 			}
+		}
+	}
+
+	draw(ctx, colour, drawSensor = false) {
+		if (this.damaged) {
+			ctx.fillStyle = "grey";
+		} else {
+			ctx.fillStyle = colour
+		}
+
+		ctx.beginPath();
+		ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
+		for (let i = 1; i < this.polygon.length; i++) {
+			 ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
+		}
+		ctx.fill();
+
+		if (this.sensor && drawSensor) {
+			this.sensor.draw(ctx);
 		}
 	}
 
@@ -134,24 +153,12 @@ class Car{
 
 		this.x -= Math.sin(this.angle) * this.speed;
 		this.y -= Math.cos(this.angle) * this.speed;
-	}
 
-	draw(ctx, colour, drawSensor = false) {
-		if (this.damaged) {
-			ctx.fillStyle = "grey";
-		} else {
-			ctx.fillStyle = colour
-		}
-
-		ctx.beginPath();
-		ctx.moveTo(this.polygon[0].x, this.polygon[0].y);
-		for (let i = 1; i < this.polygon.length; i++) {
-			 ctx.lineTo(this.polygon[i].x, this.polygon[i].y);
-		}
-		ctx.fill();
-
-		if (this.sensor && drawSensor) {
-			this.sensor.draw(ctx);
+		if (!this.useBrain) {
+			if (bestCar.y - this.y < -300) {
+				this.y = bestCar.y - 700
+				this.x = road.getLaneCenter(getRandomInt(0, 2))
+			}
 		}
 	}
 }
